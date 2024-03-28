@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching regex pattern and verifiying email</title>
+</head>
+<body>
+    <h1>Matching regex pattern</h1>
+    
+    <form id="regexForm">
+        <label for="testString">Test String:</label>
+        <input type="text" id="testString" name="testString" required><br>
+        
+        <label for="regexPattern">Regex Pattern:</label>
+        <input type="text" id="regexPattern" name="regexPattern" required><br>
+        
+        <button type="button" onclick="matchRegex()">Submit</button>
+        
+    </form>
+    
+
+    <h2>Matches:</h2>
+    <ul id="matchesList"></ul>
+    
+    <script>
+        function matchRegex() {
+            var testString = document.getElementById('testString').value;
+            var regexPattern = document.getElementById('regexPattern').value;
+
+            fetch('/result', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'test_string': testString,
+                    'regex_pattern': regexPattern,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var matchesList = document.getElementById('matchesList');
+                matchesList.innerHTML = '';
+
+                data.matches.forEach(result => {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = result;
+                    matchesList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+    <h3>Email Verification</h3>
+    
+    <form action="/email", method="POST">
+        <input type="email" name="user_email"> <br>
+        <input type="submit", value="Verify">
+    </form>
+
+
+
+</body>
+</html>
